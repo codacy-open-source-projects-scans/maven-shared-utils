@@ -26,7 +26,10 @@ import org.apache.maven.shared.utils.xml.Xpp3DomBuilder;
 import org.junit.Test;
 
 import static org.apache.maven.shared.utils.xml.Xpp3Dom.mergeXpp3Dom;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author Kristian Rosenvold
@@ -151,8 +154,8 @@ public class Xpp3DomTest {
         assertEquals(dom, dom);
         //noinspection ObjectEqualsNull
         assertFalse(dom.equals(null));
-        assertFalse(dom.equals(new Xpp3Dom((String) null)));
-        assertFalse(dom.equals(other));
+        assertNotEquals(dom, new Xpp3Dom((String) null));
+        assertNotEquals(dom, other);
     }
 
     @Test

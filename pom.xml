@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.maven.shared</groupId>
     <artifactId>maven-shared-components</artifactId>
-    <version>42</version>
+    <version>45</version>
   </parent>
 
   <artifactId>maven-shared-utils</artifactId>
@@ -45,8 +45,8 @@
     <url>https://github.com/apache/maven-shared-utils/tree/${project.scm.tag}</url>
   </scm>
   <issueManagement>
-    <system>jira</system>
-    <url>https://issues.apache.org/jira/issues/?jql=project%20%3D%20MSHARED%20AND%20component%20%3D%20maven-shared-utils</url>
+    <system>GitHub Issues</system>
+    <url>https://github.com/apache/maven-shared-utils/issues</url>
   </issueManagement>
   <ciManagement>
     <system>Jenkins</system>
@@ -86,14 +86,14 @@
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi</artifactId>
-      <version>2.4.1</version>
+      <version>2.4.2</version>
       <optional>true</optional>
     </dependency>
 
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.16.1</version>
+      <version>2.20.0</version>
     </dependency>
 
     <dependency>
@@ -106,12 +106,6 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.13.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-text</artifactId>
-      <version>1.11.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>

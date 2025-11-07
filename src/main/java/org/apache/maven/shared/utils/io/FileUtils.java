@@ -40,6 +40,7 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureRandom;
@@ -116,7 +117,7 @@ public class FileUtils {
     /**
      * The vm line separator
      */
-    private static final String FS = System.getProperty("file.separator");
+    private static final String FS = FileSystems.getDefault().getSeparator();
 
     /**
      * Non-valid Characters for naming files, folders under Windows: <code>":", "*", "?", "\"", "<", ">", "|"</code>
@@ -428,9 +429,7 @@ public class FileUtils {
         try (Writer writer = Files.newBufferedWriter(file.toPath(), charset)) {
             for (int i = 0; data != null && i < data.length; i++) {
                 writer.write(data[i]);
-                if (i < data.length) {
-                    writer.write("\n");
-                }
+                writer.write("\n");
             }
         }
     }
@@ -469,7 +468,7 @@ public class FileUtils {
         }
 
         for (String unknownFile : unknownFiles) {
-            String currentFileName = directory + System.getProperty("file.separator") + unknownFile;
+            String currentFileName = directory + FileSystems.getDefault().getSeparator() + unknownFile;
             File currentFile = new File(currentFileName);
 
             if (currentFile.isDirectory()) {
