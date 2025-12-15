@@ -33,8 +33,8 @@ import java.util.StringTokenizer;
  * <p>Originally from
  * <a href="http://jakarta.apache.org/turbine/">Turbine</a>, the
  * GenerationJavaCore library and Velocity.
- * Later a lots methods from commons-lang StringUtils
- * got added too. Gradually smaller additions and fixes have been made
+ * Later a lot of methods from commons-lang StringUtils
+ * were added too. Gradually smaller additions and fixes have been made
  * over the time by various ASF committers.</p>
  *
  * @author <a href="mailto:jon@latchkey.com">Jon S. Stevens</a>
@@ -69,7 +69,7 @@ public class StringUtils {
      * an empty String.</p>
      *
      * @param str the String to check
-     * @return the trimmed text (never <code>null</code>)
+     * @return the cleaned text (never <code>null</code>)
      * @see java.lang.String#trim()
      */
     @Nonnull
@@ -198,11 +198,11 @@ public class StringUtils {
      * <p>Compares two Strings, returning <code>true</code> if they are equal.</p>
      *
      * <p><code>null</code>s are handled without exceptions. Two <code>null</code>
-     * references are considered to be equal. The comparison is case sensitive.</p>
+     * references are considered to be equal. The comparison is case-sensitive.</p>
      *
      * @param str1 the first string
      * @param str2 the second string
-     * @return <code>true</code> if the Strings are equal, case sensitive, or
+     * @return <code>true</code> if the Strings are equal, case-sensitive, or
      *         both <code>null</code>
      * @see java.lang.String#equals(Object)
      * @deprecated use {@code java.lang.Objects.equals()}
@@ -448,32 +448,40 @@ public class StringUtils {
     // --------------------------------------------------------------------------
 
     /**
-     * <p>Splits the provided text into a array, using whitespace as the
+     * <p>Splits the provided text into an array, using whitespace as the
      * separator.</p>
      *
      * <p>The separator is not included in the returned String array.</p>
      *
      * @param str the String to parse
      * @return an array of parsed Strings
+     * @deprecated use <code>java.lang.String.split()</code> instead. Be careful when migrating.
+     *      <code>String.split()</code>) splits on a regular expression so while it can
+     *      do anything this method does, it is not a drop-in replacement.
      */
     @Nonnull
+    @Deprecated
     public static String[] split(@Nonnull String str) {
         return split(str, null, -1);
     }
 
     /**
-     * @param text the text to be split
+     * @param text the text to split
      * @param separator the separator at which the text will be split
      * @return the resulting array
      * @see #split(String, String, int)
+     * @deprecated use <code>java.lang.String.split()</code> instead. Be careful when migrating.
+     *      <code>String.split()</code>) splits on a regular expression so while it can
+     *      do anything this method does, it is not a drop-in replacement.
      */
     @Nonnull
+    @Deprecated
     public static String[] split(@Nonnull String text, @Nullable String separator) {
         return split(text, separator, -1);
     }
 
     /**
-     * <p>Splits the provided text into a array, based on a given separator.</p>
+     * <p>Splits the provided text into an array, based on a given separator.</p>
      *
      * <p>The separator is not included in the returned String array. The
      * maximum number of splits to perform can be controlled. A <code>null</code>
@@ -489,8 +497,12 @@ public class StringUtils {
      * @param max       the maximum number of elements to include in the
      *                  array.  A zero or negative value implies no limit.
      * @return an array of parsed Strings
+     * @deprecated use <code>java.lang.String.split()</code> instead. Be careful when migrating.
+     *      <code>String.split()</code>) splits on a regular expression so while it can
+     *      do anything this method does, it is not a drop-in replacement.
      */
     @Nonnull
+    @Deprecated
     public static String[] split(@Nonnull String str, @Nullable String separator, int max) {
         StringTokenizer tok;
         if (separator == null) {
@@ -1266,7 +1278,7 @@ public class StringUtils {
      * returns <code>null</code>.</p>
      *
      * @param str the String to uppercase
-     * @return the upper cased String
+     * @return the upper-cased String
      */
     public static String upperCase(String str) {
         if (str == null) {
@@ -1945,7 +1957,7 @@ public class StringUtils {
      * Converts the first character of the given String to lowercase.
      * This method does <i>not</i> trim spaces!
      *
-     * @param data the String to get it's first character lower-cased.
+     * @param data the String to get its first character lower-cased.
      * @return data string with the first character transformed to lowercase
      * @throws NullPointerException if data is <code>null</code>
      * @throws IndexOutOfBoundsException if data is empty
@@ -2148,7 +2160,7 @@ public class StringUtils {
      * @deprecated this method produces platform dependent code and contributes to
      *     non-reproducible builds. In the context of Maven, this is almost never what's needed.
      *     Remove calls to this method and do not replace them. That is, change
-     *     {@code Stringutils.unifyLineSeparators(s)} to simply {@code s}.
+     *     {@code StringUtils.unifyLineSeparators(s)} to simply {@code s}.
      */
     @Deprecated
     public static String unifyLineSeparators(@Nullable String s) {
@@ -2157,13 +2169,12 @@ public class StringUtils {
 
     /**
      * Parses the given String and replaces all occurrences of
-     * '\n', '\r' and '\r\n' with the system line separator.
+     * '\n', '\r' and '\r\n' with the specified line separator.
      *
-     * @param s  a not null String
+     * @param s a not null String
      * @param ls the wanted line separator ("\n" on UNIX), if null using the System line separator
      * @return a String that contains only System line separators
-     * @throws IllegalArgumentException if ls is not '\n', '\r', or "\r\n"
-     *
+     * @throws IllegalArgumentException if ls is not "\n", "\r", or "\r\n"
      */
     public static String unifyLineSeparators(@Nullable String s, @Nullable String ls) {
         if (s == null) {
