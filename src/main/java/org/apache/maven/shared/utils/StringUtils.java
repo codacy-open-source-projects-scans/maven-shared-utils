@@ -455,7 +455,7 @@ public class StringUtils {
      * @param str the String to parse
      * @return an array of parsed Strings
      * @deprecated use <code>java.lang.String.split()</code> instead. Be careful when migrating.
-     *      <code>String.split()</code>) splits on a regular expression so while it can
+     *      <code>String.split()</code> splits on a regular expression so while it can
      *      do anything this method does, it is not a drop-in replacement.
      */
     @NonNull
@@ -470,7 +470,7 @@ public class StringUtils {
      * @return the resulting array
      * @see #split(String, String, int)
      * @deprecated use <code>java.lang.String.split()</code> instead. Be careful when migrating.
-     *      <code>String.split()</code>) splits on a regular expression so while it can
+     *      <code>String.split()</code> splits on a regular expression so while it can
      *      do anything this method does, it is not a drop-in replacement.
      */
     @NonNull
@@ -497,7 +497,7 @@ public class StringUtils {
      *                  array.  A zero or negative value implies no limit.
      * @return an array of parsed Strings
      * @deprecated use <code>java.lang.String.split()</code> instead. Be careful when migrating.
-     *      <code>String.split()</code>) splits on a regular expression so while it can
+     *      <code>String.split()</code> splits on a regular expression so while it can
      *      do anything this method does, it is not a drop-in replacement.
      */
     @NonNull
@@ -550,7 +550,10 @@ public class StringUtils {
      *
      * @param array the array of values to concatenate
      * @return the concatenated string
+     * @deprecated use <code>java.lang.String.join()</code> or
+     *     <code>Arrays.stream(array).map(Object::toString).collect(Collectors.joining(""))</code> instead
      */
+    @Deprecated
     @NonNull
     public static String concatenate(@NonNull Object... array) {
         return join(array, "");
@@ -566,7 +569,8 @@ public class StringUtils {
      * @param array     the array of values to join together
      * @param separator the separator character to use
      * @return the joined String
-     * @deprecated use <code>java.lang.String.join(</code>) instead
+     * @deprecated use <code>java.lang.String.join()</code> or
+     *      <code>Arrays.stream(array).map(Object::toString).collect(Collectors.joining(separator))</code> instead
      */
     @Deprecated
     @NonNull
@@ -597,7 +601,7 @@ public class StringUtils {
      * @param iterator  the <code>Iterator</code> of values to join together
      * @param separator the separator character to use
      * @return the joined String
-     * @deprecated use <code>java.lang.String.join(</code>) instead
+     * @deprecated use <code>java.lang.String.join()</code> instead
      */
     @Deprecated
     @NonNull
