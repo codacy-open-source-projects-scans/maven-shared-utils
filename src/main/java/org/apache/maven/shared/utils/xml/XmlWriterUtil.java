@@ -206,7 +206,7 @@ public class XmlWriterUtil {
         int magicNumber = indentation.length() + columnSize - "-->".length() - 1;
         String[] sentences = StringUtils.split(comment, CRLF);
 
-        StringBuffer line = new StringBuffer(indentation + "<!-- ");
+        StringBuilder line = new StringBuilder(indentation + "<!-- ");
         for (String sentence : sentences) {
             String[] words = StringUtils.split(sentence, " ");
             for (String word : words) {
@@ -221,7 +221,7 @@ public class XmlWriterUtil {
                         line.append("-->").append(CRLF);
                         writer.writeMarkup(line.toString());
                     }
-                    line = new StringBuffer(indentation + "<!-- ");
+                    line = new StringBuilder(indentation + "<!-- ");
                     line.append(word).append(' ');
                 } else {
                     line.append(word).append(' ');

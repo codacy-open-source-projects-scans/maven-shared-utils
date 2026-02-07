@@ -1321,7 +1321,7 @@ public class StringUtils {
             if (length == 0) {
                 return "";
             } else {
-                return new StringBuffer(length)
+                return new StringBuilder(length)
                         .append(Character.toLowerCase(str.charAt(0)))
                         .append(str, 1, length)
                         .toString();
@@ -1723,7 +1723,7 @@ public class StringUtils {
         if (str == null) {
             return null;
         }
-        return new StringBuffer(str).reverse().toString();
+        return new StringBuilder(str).reverse().toString();
     }
 
     /**
@@ -1771,7 +1771,7 @@ public class StringUtils {
     /**
      * <p>Turn "Now is the time for all good men" into "Now is the time for..."</p>
      * <p>Specifically:</p>
-     * <p>If str is less than max characters long, return it.
+     * <p>If str is no greater than max characters long, return it.
      * Else abbreviate it to (substring(str, 0, max-3) + "...").
      * If maxWidth is less than 3, throw an IllegalArgumentException.
      * In no case will it return a string of length greater than maxWidth.</p>
