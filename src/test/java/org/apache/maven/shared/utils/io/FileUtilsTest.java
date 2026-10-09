@@ -34,6 +34,7 @@ import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -42,7 +43,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.shared.utils.Os;
 import org.apache.maven.shared.utils.testhelpers.FileTestHelper;
-import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -346,6 +346,34 @@ public class FileUtilsTest {
             testFile1.lastModified() == destination.lastModified());*/
     }
 
+    @Test
+    public void copyFileCopiesDanglingSymbolicLink() throws Exception {
+        assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS));
+        File link = new File(tempFolder, "dangling");
+        Files.createSymbolicLink(link.toPath(), Paths.get("non-existing.txt"));
+        File destination = new File(new File(tempFolder, "dest"), "dangling");
+
+        FileUtils.copyFile(link, destination);
+
+        assertTrue(Files.isSymbolicLink(destination.toPath()), "destination is a symbolic link");
+        assertEquals(Paths.get("non-existing.txt"), Files.readSymbolicLink(destination.toPath()));
+    }
+
+    @Test
+    public void copyFileCopiesRelativeSymbolicLinkIntoAnotherDirectory() throws Exception {
+        assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS));
+        Files.write(new File(tempFolder, "target.txt").toPath(), "Hello World!".getBytes(StandardCharsets.UTF_8));
+        File link = new File(tempFolder, "link");
+        Files.createSymbolicLink(link.toPath(), Paths.get("target.txt"));
+        File destination = new File(new File(tempFolder, "dest"), "link");
+
+        // the relative target does not resolve from the destination directory; the link is copied as is
+        FileUtils.copyFile(link, destination, null, (FileUtils.FilterWrapper[]) null);
+
+        assertTrue(Files.isSymbolicLink(destination.toPath()), "destination is a symbolic link");
+        assertEquals(Paths.get("target.txt"), Files.readSymbolicLink(destination.toPath()));
+    }
+
     /** A time today, rounded down to the previous minute */
     private static final long MODIFIED_TODAY =
             (System.currentTimeMillis() / TimeUnit.MINUTES.toMillis(1)) * TimeUnit.MINUTES.toMillis(1);
@@ -489,7 +517,7 @@ public class FileUtilsTest {
         };
     }
 
-    private File write(@NonNull String name, long lastModified, @NonNull String text) throws IOException {
+    private File write(String name, long lastModified, String text) throws IOException {
         final File file = new File(tempFolder, name);
         try (Writer writer = new FileWriter(file)) {
             writer.write(text);
@@ -499,7 +527,7 @@ public class FileUtilsTest {
         return file;
     }
 
-    private static void assertFileContent(@NonNull File file, @NonNull String expected) throws IOException {
+    private static void assertFileContent(File file, String expected) throws IOException {
         try (Reader in = new FileReader(file)) {
             assertEquals(expected, IOUtils.toString(in), "Expected " + file.getPath() + " to contain: " + expected);
         }

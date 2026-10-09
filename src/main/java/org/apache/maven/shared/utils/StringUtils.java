@@ -24,9 +24,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-
 /**
  * <p>Common <code>String</code> manipulation routines.</p>
  *
@@ -73,7 +70,6 @@ public class StringUtils {
      * @deprecated use {@link #trim(String)} instead.
      */
     @Deprecated
-    @NonNull
     public static String clean(String str) {
         return (str == null ? "" : str.trim());
     }
@@ -100,8 +96,7 @@ public class StringUtils {
      * @param str string target to delete whitespace from
      * @return the String without whitespace
      */
-    @NonNull
-    public static String deleteWhitespace(@NonNull String str) {
+    public static String deleteWhitespace(String str) {
         StringBuilder buffer = new StringBuilder();
         int sz = str.length();
         for (int i = 0; i < sz; i++) {
@@ -119,7 +114,7 @@ public class StringUtils {
      * @param str the String to check
      * @return true if the String is non-null, and not length zero
      */
-    public static boolean isNotEmpty(@Nullable String str) {
+    public static boolean isNotEmpty(String str) {
         return ((str != null) && (str.length() > 0));
     }
 
@@ -134,7 +129,7 @@ public class StringUtils {
      * @return <code>true</code> if the String is <code>null</code>, or
      *         length zero once trimmed
      */
-    public static boolean isEmpty(@Nullable String str) {
+    public static boolean isEmpty(String str) {
         return ((str == null) || (str.trim().length() == 0));
     }
 
@@ -154,7 +149,7 @@ public class StringUtils {
      * @param str the String to check, may be null
      * @return <code>true</code> if the String is null, empty or whitespace
      */
-    public static boolean isBlank(@Nullable String str) {
+    public static boolean isBlank(String str) {
         int strLen;
         // CHECKSTYLE_OFF: InnerAssignment
         if (str == null || (strLen = str.length()) == 0)
@@ -186,7 +181,7 @@ public class StringUtils {
      * @param str the String to check, may be null
      * @return <code>true</code> if the String is not empty and not null and not whitespace
      */
-    public static boolean isNotBlank(@Nullable String str) {
+    public static boolean isNotBlank(String str) {
         return !isBlank(str);
     }
 
@@ -204,10 +199,10 @@ public class StringUtils {
      * @return <code>true</code> if the Strings are equal, case-sensitive, or
      *         both <code>null</code>
      * @see java.lang.String#equals(Object)
-     * @deprecated use {@code java.lang.Objects.equals()}
+     * @deprecated use {@code java.util.Objects.equals()}
      */
     @Deprecated
-    public static boolean equals(@Nullable String str1, @Nullable String str2) {
+    public static boolean equals(String str1, String str2) {
         return (str1 == null ? str2 == null : str1.equals(str2));
     }
 
@@ -458,9 +453,8 @@ public class StringUtils {
      *      <code>String.split()</code> splits on a regular expression so while it can
      *      do anything this method does, it is not a drop-in replacement.
      */
-    @NonNull
     @Deprecated
-    public static String[] split(@NonNull String str) {
+    public static String[] split(String str) {
         return split(str, null, -1);
     }
 
@@ -473,9 +467,8 @@ public class StringUtils {
      *      <code>String.split()</code> splits on a regular expression so while it can
      *      do anything this method does, it is not a drop-in replacement.
      */
-    @NonNull
     @Deprecated
-    public static String[] split(@NonNull String text, @Nullable String separator) {
+    public static String[] split(String text, String separator) {
         return split(text, separator, -1);
     }
 
@@ -500,9 +493,8 @@ public class StringUtils {
      *      <code>String.split()</code> splits on a regular expression so while it can
      *      do anything this method does, it is not a drop-in replacement.
      */
-    @NonNull
     @Deprecated
-    public static String[] split(@NonNull String str, @Nullable String separator, int max) {
+    public static String[] split(String str, String separator, int max) {
         StringTokenizer tok;
         if (separator == null) {
             // Null separator means we're using StringTokenizer's default
@@ -554,8 +546,7 @@ public class StringUtils {
      *     <code>Arrays.stream(array).map(Object::toString).collect(Collectors.joining(""))</code> instead
      */
     @Deprecated
-    @NonNull
-    public static String concatenate(@NonNull Object... array) {
+    public static String concatenate(Object... array) {
         return join(array, "");
     }
 
@@ -573,8 +564,7 @@ public class StringUtils {
      *      <code>Arrays.stream(array).map(Object::toString).collect(Collectors.joining(separator))</code> instead
      */
     @Deprecated
-    @NonNull
-    public static String join(@NonNull Object[] array, @Nullable String separator) {
+    public static String join(Object[] array, String separator) {
         if (separator == null) {
             separator = "";
         }
@@ -604,8 +594,7 @@ public class StringUtils {
      * @deprecated use <code>java.lang.String.join()</code> instead
      */
     @Deprecated
-    @NonNull
-    public static String join(@NonNull Iterator<?> iterator, String separator) {
+    public static String join(Iterator<?> iterator, String separator) {
         if (separator == null) {
             separator = "";
         }
@@ -633,7 +622,7 @@ public class StringUtils {
      * @return the text with any replacements processed
      * @see #replace(String text, char repl, char with, int max)
      */
-    public static String replaceOnce(@Nullable String text, char repl, char with) {
+    public static String replaceOnce(String text, char repl, char with) {
         return replace(text, repl, with, 1);
     }
 
@@ -647,8 +636,12 @@ public class StringUtils {
      * @param with char to replace with
      * @return the text with any replacements processed
      * @see #replace(String text, char repl, char with, int max)
+     * @deprecated use {@link String#replace(char, char)} instead. Note that the JDK method throws
+     *             {@link NullPointerException} when {@code text} is <code>null</code>, where this
+     *             method returns <code>null</code>.
      */
-    public static String replace(@Nullable String text, char repl, char with) {
+    @Deprecated
+    public static String replace(String text, char repl, char with) {
         return replace(text, repl, with, -1);
     }
 
@@ -664,7 +657,7 @@ public class StringUtils {
      * @param max  maximum number of values to replace, or <code>-1</code> if no maximum
      * @return the text with any replacements processed
      */
-    public static String replace(@Nullable String text, char repl, char with, int max) {
+    public static String replace(String text, char repl, char with, int max) {
         return replace(text, String.valueOf(repl), String.valueOf(with), max);
     }
 
@@ -679,7 +672,7 @@ public class StringUtils {
      * @return the text with any replacements processed
      * @see #replace(String text, String repl, String with, int max)
      */
-    public static String replaceOnce(@Nullable String text, @Nullable String repl, @Nullable String with) {
+    public static String replaceOnce(String text, String repl, String with) {
         return replace(text, repl, with, 1);
     }
 
@@ -693,8 +686,13 @@ public class StringUtils {
      * @param with string to replace with
      * @return the text with any replacements processed
      * @see #replace(String text, String repl, String with, int max)
+     * @deprecated use {@link String#replace(CharSequence, CharSequence)} instead. Note two differences:
+     *             the JDK method throws {@link NullPointerException} on <code>null</code> arguments,
+     *             and it replaces an empty <code>repl</code> at every position, where this method
+     *             returns <code>text</code> unchanged.
      */
-    public static String replace(@Nullable String text, @Nullable String repl, @Nullable String with) {
+    @Deprecated
+    public static String replace(String text, String repl, String with) {
         return replace(text, repl, with, -1);
     }
 
@@ -710,7 +708,7 @@ public class StringUtils {
      * @param max  maximum number of values to replace, or <code>-1</code> if no maximum
      * @return the text with any replacements processed
      */
-    public static String replace(@Nullable String text, @Nullable String repl, @Nullable String with, int max) {
+    public static String replace(String text, String repl, String with, int max) {
         if ((text == null) || (repl == null) || (with == null) || (repl.length() == 0)) {
             return text;
         }
@@ -739,8 +737,7 @@ public class StringUtils {
      * @return string with overlaid text
      * @throws NullPointerException if text or overlay is <code>null</code>
      */
-    @NonNull
-    public static String overlayString(@NonNull String text, @NonNull String overlay, int start, int end) {
+    public static String overlayString(String text, String overlay, int start, int end) {
         if (overlay == null) {
             throw new NullPointerException("overlay is null");
         }
@@ -765,8 +762,7 @@ public class StringUtils {
      * @return string containing centered String
      * @throws NullPointerException if str is <code>null</code>
      */
-    @NonNull
-    public static String center(@NonNull String str, int size) {
+    public static String center(String str, int size) {
         return center(str, size, " ");
     }
 
@@ -782,8 +778,7 @@ public class StringUtils {
      * @throws ArithmeticException  if delim is the empty String
      * @throws NullPointerException if str or delim is <code>null</code>
      */
-    @NonNull
-    public static String center(@NonNull String str, int size, @NonNull String delim) {
+    public static String center(String str, int size, String delim) {
         int sz = str.length();
         int p = size - sz;
         if (p < 1) {
@@ -804,8 +799,7 @@ public class StringUtils {
      * @return string without chomped newline
      * @throws NullPointerException if str is <code>null</code>
      */
-    @NonNull
-    public static String chomp(@NonNull String str) {
+    public static String chomp(String str) {
         return chomp(str, "\n");
     }
 
@@ -818,8 +812,7 @@ public class StringUtils {
      * @return string without chomped ending
      * @throws NullPointerException if str or sep is <code>null</code>
      */
-    @NonNull
-    public static String chomp(@NonNull String str, @NonNull String sep) {
+    public static String chomp(String str, String sep) {
         int idx = str.lastIndexOf(sep);
         if (idx != -1) {
             return str.substring(0, idx);
@@ -836,8 +829,7 @@ public class StringUtils {
      * @return string without chomped ending
      * @throws NullPointerException if str is <code>null</code>
      */
-    @NonNull
-    public static String chompLast(@NonNull String str) {
+    public static String chompLast(String str) {
         return chompLast(str, "\n");
     }
 
@@ -849,9 +841,8 @@ public class StringUtils {
      * @return string without chomped ending
      * @throws NullPointerException if str or sep is <code>null</code>
      */
-    @NonNull
-    public static String chompLast(@NonNull String str, @NonNull String sep) {
-        if (str.length() == 0) {
+    public static String chompLast(String str, String sep) {
+        if (str.length() == 0 || sep.length() > str.length()) {
             return str;
         }
         String sub = str.substring(str.length() - sep.length());
@@ -871,8 +862,7 @@ public class StringUtils {
      * @return string chomped
      * @throws NullPointerException if str or sep is <code>null</code>
      */
-    @NonNull
-    public static String getChomp(@NonNull String str, @NonNull String sep) {
+    public static String getChomp(String str, String sep) {
         int idx = str.lastIndexOf(sep);
         if (idx == str.length() - sep.length()) {
             return sep;
@@ -892,8 +882,7 @@ public class StringUtils {
      * @return string without chomped beginning
      * @throws NullPointerException if str or sep is <code>null</code>
      */
-    @NonNull
-    public static String prechomp(@NonNull String str, @NonNull String sep) {
+    public static String prechomp(String str, String sep) {
         int idx = str.indexOf(sep);
         if (idx != -1) {
             return str.substring(idx + sep.length());
@@ -911,8 +900,7 @@ public class StringUtils {
      * @return string prechomped
      * @throws NullPointerException if str or sep is <code>null</code>
      */
-    @NonNull
-    public static String getPrechomp(@NonNull String str, @NonNull String sep) {
+    public static String getPrechomp(String str, String sep) {
         int idx = str.indexOf(sep);
         if (idx != -1) {
             return str.substring(0, idx + sep.length());
@@ -934,8 +922,7 @@ public class StringUtils {
      * @return string without last character
      * @throws NullPointerException if str is <code>null</code>
      */
-    @NonNull
-    public static String chop(@NonNull String str) {
+    public static String chop(String str) {
         if ("".equals(str)) {
             return "";
         }
@@ -961,8 +948,10 @@ public class StringUtils {
      * @return string without newline
      * @throws NullPointerException if str is <code>null</code>
      */
-    @NonNull
-    public static String chopNewline(@NonNull String str) {
+    public static String chopNewline(String str) {
+        if (str.isEmpty()) {
+            return "";
+        }
         int lastIdx = str.length() - 1;
         char last = str.charAt(lastIdx);
         if (last == '\n') {
@@ -990,8 +979,7 @@ public class StringUtils {
      * @return string with escaped values
      * @throws NullPointerException if str is <code>null</code>
      */
-    @NonNull
-    public static String escape(@NonNull String str) {
+    public static String escape(String str) {
         // improved with code from  cybertiger@cyberiantiger.org
         // unicode from him, and defaul for < 32's.
         int sz = str.length();
@@ -1075,8 +1063,7 @@ public class StringUtils {
      * @throws NegativeArraySizeException if <code>repeat &lt; 0</code>
      * @throws NullPointerException       if str is <code>null</code>
      */
-    @NonNull
-    public static String repeat(@NonNull String str, int repeat) {
+    public static String repeat(String str, int repeat) {
         StringBuilder buffer = new StringBuilder(repeat * str.length());
         for (int i = 0; i < repeat; i++) {
             buffer.append(str);
@@ -1094,8 +1081,7 @@ public class StringUtils {
      * @return right padded String
      * @throws NullPointerException if str is <code>null</code>
      */
-    @NonNull
-    public static String rightPad(@NonNull String str, int size) {
+    public static String rightPad(String str, int size) {
         return rightPad(str, size, " ");
     }
 
@@ -1108,11 +1094,12 @@ public class StringUtils {
      * @param size  size to pad to
      * @param delim string to pad with
      * @return right padded String
-     * @throws ArithmeticException  if delim is the empty String
      * @throws NullPointerException if str or delim is <code>null</code>
      */
-    @NonNull
-    public static String rightPad(@NonNull String str, int size, @NonNull String delim) {
+    public static String rightPad(String str, int size, String delim) {
+        if (delim.isEmpty()) {
+            return str;
+        }
         size = (size - str.length()) / delim.length();
         if (size > 0) {
             str += repeat(delim, size);
@@ -1130,8 +1117,7 @@ public class StringUtils {
      * @return left padded String
      * @throws NullPointerException if str or delim is <code>null</code>
      */
-    @NonNull
-    public static String leftPad(@NonNull String str, int size) {
+    public static String leftPad(String str, int size) {
         return leftPad(str, size, " ");
     }
 
@@ -1142,11 +1128,12 @@ public class StringUtils {
      * @param size  size to pad to
      * @param delim string to pad with
      * @return left padded String
-     * @throws ArithmeticException  if delim is the empty string
      * @throws NullPointerException if str or delim is null
      */
-    @NonNull
-    public static String leftPad(@NonNull String str, int size, @NonNull String delim) {
+    public static String leftPad(String str, int size, String delim) {
+        if (delim.isEmpty()) {
+            return str;
+        }
         size = (size - str.length()) / delim.length();
         if (size > 0) {
             str = repeat(delim, size) + str;
@@ -1178,7 +1165,7 @@ public class StringUtils {
      * @param delim the String to remove at start and end
      * @return the stripped String
      */
-    public static String strip(String str, @Nullable String delim) {
+    public static String strip(String str, String delim) {
         str = stripStart(str, delim);
         return stripEnd(str, delim);
     }
@@ -1202,7 +1189,7 @@ public class StringUtils {
      * @param delimiter the String to remove at start and end
      * @return the stripped Strings
      */
-    public static String[] stripAll(String[] strs, @Nullable String delimiter) {
+    public static String[] stripAll(String[] strs, String delimiter) {
         if ((strs == null) || (strs.length == 0)) {
             return strs;
         }
@@ -1224,7 +1211,7 @@ public class StringUtils {
      * @param strip the String to remove
      * @return the stripped String
      */
-    public static String stripEnd(String str, @Nullable String strip) {
+    public static String stripEnd(String str, String strip) {
         if (str == null) {
             return null;
         }
@@ -1252,7 +1239,7 @@ public class StringUtils {
      * @param strip the String to remove
      * @return the stripped String
      */
-    public static String stripStart(String str, @Nullable String strip) {
+    public static String stripStart(String str, String strip) {
         if (str == null) {
             return null;
         }
@@ -1478,7 +1465,7 @@ public class StringUtils {
      * @return the String that was nested, or <code>null</code>
      * @throws NullPointerException if tag is <code>null</code>
      */
-    public static String getNestedString(String str, @NonNull String tag) {
+    public static String getNestedString(String str, String tag) {
         return getNestedString(str, tag, tag);
     }
 
@@ -1491,7 +1478,7 @@ public class StringUtils {
      * @return the String that was nested, or <code>null</code>
      * @throws NullPointerException if open or close is <code>null</code>
      */
-    public static String getNestedString(String str, @NonNull String open, @NonNull String close) {
+    public static String getNestedString(String str, String open, String close) {
         if (str == null) {
             return null;
         }
@@ -1515,7 +1502,7 @@ public class StringUtils {
      * @return the number of occurrences, 0 if the String is <code>null</code>
      * @throws NullPointerException if sub is <code>null</code>
      */
-    public static int countMatches(@Nullable String str, @NonNull String sub) {
+    public static int countMatches(String str, String sub) {
         if (sub.equals("")) {
             return 0;
         }
@@ -1682,10 +1669,9 @@ public class StringUtils {
      * @param obj the Object to check
      * @return the passed in Object's toString, or blank if it was
      *         <code>null</code>
-     * @deprecated use {@code java.lang.Objects.toString()}
+     * @deprecated use {@code java.util.Objects.toString()}
      */
     @Deprecated
-    @NonNull
     public static String defaultString(Object obj) {
         return defaultString(obj, "");
     }
@@ -1700,11 +1686,10 @@ public class StringUtils {
      *                      <code>null</code>
      * @return the passed in string, or the default if it was
      *         <code>null</code>
-     * @deprecated use {@code java.lang.Objects.toString()}
+     * @deprecated use {@code java.util.Objects.toString()}
      */
     @Deprecated
-    @NonNull
-    public static String defaultString(Object obj, @NonNull String defaultString) {
+    public static String defaultString(Object obj, String defaultString) {
         return (obj == null) ? defaultString : obj.toString();
     }
 
@@ -1737,8 +1722,7 @@ public class StringUtils {
      * @param delimiter the delimiter to use
      * @return the reversed String
      */
-    @NonNull
-    public static String reverseDelimitedString(@NonNull String str, String delimiter) {
+    public static String reverseDelimitedString(String str, String delimiter) {
         // could implement manually, but simple way is to reuse other,
         // probably slower, methods.
         String[] strs = split(str, delimiter);
@@ -1751,7 +1735,7 @@ public class StringUtils {
      *
      * @param array the array to reverse
      */
-    private static void reverseArray(@NonNull String... array) {
+    private static void reverseArray(String... array) {
         int i = 0;
         int j = array.length - 1;
         String tmp;
@@ -1780,8 +1764,7 @@ public class StringUtils {
      * @param maxWidth maximum length of result string
      * @return the abbreviated string
      */
-    @NonNull
-    public static String abbreviate(@NonNull String s, int maxWidth) {
+    public static String abbreviate(String s, int maxWidth) {
         return abbreviate(s, 0, maxWidth);
     }
 
@@ -1800,8 +1783,7 @@ public class StringUtils {
      * @param maxWidth maximum length of result string
      * @return the abbreviated string
      */
-    @NonNull
-    public static String abbreviate(@NonNull String s, int offset, int maxWidth) {
+    public static String abbreviate(String s, int offset, int maxWidth) {
         if (maxWidth < 4) {
             throw new IllegalArgumentException("Minimum abbreviation width is 4");
         }
@@ -1841,7 +1823,7 @@ public class StringUtils {
      * @param s2 the second string
      * @return the portion of s2 where it differs from s1; returns the empty string ("") if they are equal
      */
-    public static String difference(@NonNull String s1, @NonNull String s2) {
+    public static String difference(String s1, String s2) {
         int at = differenceAt(s1, s2);
         if (at == -1) {
             return "";
@@ -1859,7 +1841,7 @@ public class StringUtils {
      * @param s2 the second string
      * @return the index where s2 and s1 begin to differ; -1 if they are equal
      */
-    public static int differenceAt(@NonNull String s1, @NonNull String s2) {
+    public static int differenceAt(String s1, String s2) {
         int i;
         for (i = 0; (i < s1.length()) && (i < s2.length()); ++i) {
             if (s1.charAt(i) != s2.charAt(i)) {
@@ -1881,7 +1863,7 @@ public class StringUtils {
      * @param namespace the namespace which contains the replacements
      * @return the interpolated text
      */
-    public static String interpolate(String text, @NonNull Map<?, ?> namespace) {
+    public static String interpolate(String text, Map<?, ?> namespace) {
         for (Map.Entry<?, ?> entry : namespace.entrySet()) {
             String key = entry.getKey().toString();
 
@@ -1893,10 +1875,10 @@ public class StringUtils {
 
             String value = obj.toString();
 
-            text = replace(text, "${" + key + "}", value);
+            text = replace(text, "${" + key + "}", value, -1);
 
             if (!key.contains(" ")) {
-                text = replace(text, "$" + key, value);
+                text = replace(text, "$" + key, value, -1);
             }
         }
         return text;
@@ -1915,8 +1897,7 @@ public class StringUtils {
      * @param replaceThis the things which should be replaced
      * @return humped String
      */
-    @NonNull
-    public static String removeAndHump(@NonNull String data, @NonNull String replaceThis) {
+    public static String removeAndHump(String data, String replaceThis) {
         String temp;
 
         StringBuilder out = new StringBuilder();
@@ -1943,8 +1924,7 @@ public class StringUtils {
      * @throws IndexOutOfBoundsException if data is empty
      * @throws NullPointerException if data is <code>null</code>
      */
-    @NonNull
-    public static String capitalizeFirstLetter(@NonNull String data) {
+    public static String capitalizeFirstLetter(String data) {
         char firstChar = data.charAt(0);
         char titleCase = Character.toTitleCase(firstChar);
         if (firstChar == titleCase) {
@@ -1965,8 +1945,7 @@ public class StringUtils {
      * @throws IndexOutOfBoundsException if data is empty
      * @throws NullPointerException if data is <code>null</code>
      */
-    @NonNull
-    public static String lowercaseFirstLetter(@NonNull String data) {
+    public static String lowercaseFirstLetter(String data) {
         char firstLetter = Character.toLowerCase(data.substring(0, 1).charAt(0));
 
         String restLetters = data.substring(1);
@@ -1981,8 +1960,7 @@ public class StringUtils {
      * @param view the view
      * @return deHumped String
      */
-    @NonNull
-    public static String addAndDeHump(@NonNull String view) {
+    public static String addAndDeHump(String view) {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < view.length(); i++) {
@@ -2013,7 +1991,7 @@ public class StringUtils {
      * @see #quoteAndEscape(String, char, char[], char[], char, boolean)
      * @see #quoteAndEscape(String, char, char[], char[], char, boolean)
      */
-    public static String quoteAndEscape(@Nullable String source, char quoteChar) {
+    public static String quoteAndEscape(String source, char quoteChar) {
         return quoteAndEscape(source, quoteChar, new char[] {quoteChar}, new char[] {' '}, '\\', false);
     }
 
@@ -2026,7 +2004,7 @@ public class StringUtils {
      * @return the String quoted and escaped
      * @see #quoteAndEscape(String, char, char[], char[], char, boolean)
      */
-    public static String quoteAndEscape(@Nullable String source, char quoteChar, @NonNull char[] quotingTriggers) {
+    public static String quoteAndEscape(String source, char quoteChar, char[] quotingTriggers) {
         return quoteAndEscape(source, quoteChar, new char[] {quoteChar}, quotingTriggers, '\\', false);
     }
 
@@ -2040,11 +2018,7 @@ public class StringUtils {
      * @see #quoteAndEscape(String, char, char[], char[], char, boolean)
      */
     public static String quoteAndEscape(
-            @Nullable String source,
-            char quoteChar,
-            @NonNull final char[] escapedChars,
-            char escapeChar,
-            boolean force) {
+            String source, char quoteChar, final char[] escapedChars, char escapeChar, boolean force) {
         return quoteAndEscape(source, quoteChar, escapedChars, new char[] {' '}, escapeChar, force);
     }
 
@@ -2058,10 +2032,10 @@ public class StringUtils {
      * @return the String quoted and escaped
      */
     public static String quoteAndEscape(
-            @Nullable String source,
+            String source,
             char quoteChar,
-            @NonNull final char[] escapedChars,
-            @NonNull final char[] quotingTriggers,
+            final char[] escapedChars,
+            final char[] quotingTriggers,
             char escapeChar,
             boolean force) {
         if (source == null) {
@@ -2103,7 +2077,7 @@ public class StringUtils {
      * @param escapeChar prefix for escaping a character
      * @return the String escaped
      */
-    public static String escape(@Nullable String source, @NonNull final char[] escapedChars, char escapeChar) {
+    public static String escape(String source, final char[] escapedChars, char escapeChar) {
         if (source == null) {
             return null;
         }
@@ -2133,8 +2107,7 @@ public class StringUtils {
      * @param s a not null String
      * @return a string with unique whitespace
      */
-    @NonNull
-    public static String removeDuplicateWhitespace(@NonNull String s) {
+    public static String removeDuplicateWhitespace(String s) {
         StringBuilder result = new StringBuilder();
         int length = s.length();
         boolean isPreviousWhiteSpace = false;
@@ -2162,7 +2135,7 @@ public class StringUtils {
      *     {@code StringUtils.unifyLineSeparators(s)} to simply {@code s}.
      */
     @Deprecated
-    public static String unifyLineSeparators(@Nullable String s) {
+    public static String unifyLineSeparators(String s) {
         return unifyLineSeparators(s, System.lineSeparator());
     }
 
@@ -2175,7 +2148,7 @@ public class StringUtils {
      * @return a String that contains only System line separators
      * @throws IllegalArgumentException if ls is not "\n", "\r", or "\r\n"
      */
-    public static String unifyLineSeparators(@Nullable String s, @Nullable String ls) {
+    public static String unifyLineSeparators(String s, String ls) {
         if (s == null) {
             return null;
         }
@@ -2225,8 +2198,12 @@ public class StringUtils {
      * @param searchChar the character to find
      * @return true if the String contains the search character,
      *         false if not or <code>null</code> string input
+     * @deprecated use {@link String#indexOf(int)} and test for <code>&gt;= 0</code> instead. Note that
+     *             the JDK method throws {@link NullPointerException} when <code>str</code> is
+     *             <code>null</code>, where this method returns <code>false</code>.
      */
-    public static boolean contains(@Nullable String str, char searchChar) {
+    @Deprecated
+    public static boolean contains(String str, char searchChar) {
         return !isEmpty(str) && str.indexOf(searchChar) >= 0;
     }
 
@@ -2249,8 +2226,12 @@ public class StringUtils {
      * @param searchStr the String to find, may be null
      * @return true if the String contains the search String,
      *         false if not or <code>null</code> string input
+     * @deprecated use {@link String#contains(CharSequence)} instead. Note that the JDK method throws
+     *             {@link NullPointerException} on <code>null</code> arguments, where this method
+     *             returns <code>false</code>.
      */
-    public static boolean contains(@Nullable String str, @Nullable String searchStr) {
+    @Deprecated
+    public static boolean contains(String str, String searchStr) {
         return !(str == null || searchStr == null) && str.contains(searchStr);
     }
 
@@ -2272,7 +2253,7 @@ public class StringUtils {
      * @return true if the String ends with the search String,
      *         false if not or <code>null</code> string input
      */
-    public static boolean endsWithIgnoreCase(@Nullable String str, @Nullable String searchStr) {
+    public static boolean endsWithIgnoreCase(String str, String searchStr) {
         if (str == null || searchStr == null) {
             // for consistency with contains
             return false;

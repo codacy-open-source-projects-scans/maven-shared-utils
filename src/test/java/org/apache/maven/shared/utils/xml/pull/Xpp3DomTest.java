@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.maven.shared.utils.xml.Xpp3Dom.mergeXpp3Dom;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -40,6 +40,28 @@ public class Xpp3DomTest {
         Xpp3Dom t1s1 = new Xpp3Dom(element);
         t1s1.setValue(value);
         return t1s1;
+    }
+
+    @Test
+    public void defaultValueIsNotNull() {
+        // The one-arg constructor did not initialize value.
+        assertNotNull(new Xpp3Dom("test").getValue());
+    }
+
+    @Test
+    public void removeChildByIndexUpdatesChildMap() {
+        Xpp3Dom parent = new Xpp3Dom("parent");
+        Xpp3Dom first = new Xpp3Dom("child");
+        first.setValue("first");
+        Xpp3Dom second = new Xpp3Dom("child");
+        second.setValue("second");
+        parent.addChild(first);
+        parent.addChild(second);
+
+        parent.removeChild(1);
+
+        assertEquals(1, parent.getChildCount());
+        assertEquals("first", parent.getChild("child").getValue());
     }
 
     @Test
@@ -82,7 +104,7 @@ public class Xpp3DomTest {
         Xpp3Dom result = mergeXpp3Dom(t1, t2);
 
         assertEquals(2, result.getAttributeNames().length);
-        assertNull(result.getValue());
+        assertEquals("", result.getValue());
     }
 
     @Test

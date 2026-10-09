@@ -18,27 +18,15 @@
  */
 package org.apache.maven.shared.utils.xml;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.OutputStream;
+import java.io.StringWriter;
 
-/**
- * @deprecated use org.apache.commons.io.output.XmlStreamWriter instead
- */
-@Deprecated
-public class XmlStreamWriter extends org.apache.commons.io.output.XmlStreamWriter {
-    /**
-     * @param out {@link OutputStream}
-     */
-    public XmlStreamWriter(OutputStream out) {
-        super(out);
-    }
+import org.junit.jupiter.api.Test;
 
-    /**
-     * @param file the file to use
-     * @throws FileNotFoundException in case of not found file
-     */
-    public XmlStreamWriter(File file) throws FileNotFoundException {
-        super(file);
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class Xpp3DomWriterTest {
+    @Test
+    void writeNullDom() {
+        assertThrows(NullPointerException.class, () -> Xpp3DomWriter.write(new StringWriter(), null));
     }
 }

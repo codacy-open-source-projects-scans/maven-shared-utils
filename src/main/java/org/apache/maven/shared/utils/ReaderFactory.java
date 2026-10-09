@@ -31,7 +31,6 @@ import java.net.URL;
 import java.nio.charset.Charset;
 
 import org.apache.commons.io.input.XmlStreamReader;
-import org.jspecify.annotations.NonNull;
 
 /**
  * Utility to create Readers from streams, with explicit encoding choice: platform default,
@@ -47,7 +46,7 @@ public class ReaderFactory {
      * ISO Latin Alphabet #1, also known as ISO-LATIN-1.
      * Every implementation of the Java platform is required to support this character encoding.
      *
-     * @deprecated use {@code java.nio.charset.StandardCharset.ISO_8859_1}
+     * @deprecated use {@code java.nio.charset.StandardCharsets.ISO_8859_1}
      */
     @Deprecated
     public static final String ISO_8859_1 = "ISO-8859-1";
@@ -56,7 +55,7 @@ public class ReaderFactory {
      * Seven-bit ASCII, also known as ISO646-US, also known as the Basic Latin block of the Unicode character set.
      * Every implementation of the Java platform is required to support this character encoding.
      *
-     * @deprecated use {@code java.nio.charset.StandardCharset.US_ASCII}
+     * @deprecated use {@code java.nio.charset.StandardCharsets.US_ASCII}
      */
     @Deprecated
     public static final String US_ASCII = "US-ASCII";
@@ -66,7 +65,7 @@ public class ReaderFactory {
      * order accepted on input, big-endian used on output).
      * Every implementation of the Java platform is required to support this character encoding.
      *
-     * @deprecated use {@code java.nio.charset.StandardCharset.UTF_16}
+     * @deprecated use {@code java.nio.charset.StandardCharsets.UTF_16}
      */
     @Deprecated
     public static final String UTF_16 = "UTF-16";
@@ -75,7 +74,7 @@ public class ReaderFactory {
      * Sixteen-bit Unicode Transformation Format, big-endian byte order.
      * Every implementation of the Java platform is required to support this character encoding.
      *
-     * @deprecated use {@code java.nio.charset.StandardCharset.UTF_16BE}
+     * @deprecated use {@code java.nio.charset.StandardCharsets.UTF_16BE}
      */
     @Deprecated
     public static final String UTF_16BE = "UTF-16BE";
@@ -84,7 +83,7 @@ public class ReaderFactory {
      * Sixteen-bit Unicode Transformation Format, little-endian byte order.
      * Every implementation of the Java platform is required to support this character encoding.
      *
-     * @deprecated use {@code java.nio.charset.StandardCharset.UTF_16LE}
+     * @deprecated use {@code java.nio.charset.StandardCharsets.UTF_16LE}
      */
     @Deprecated
     public static final String UTF_16LE = "UTF-16LE";
@@ -93,7 +92,7 @@ public class ReaderFactory {
      * Eight-bit Unicode Transformation Format.
      * Every implementation of the Java platform is required to support this character encoding.
      *
-     * @deprecated use {@code java.nio.charset.StandardCharset.UTF_8}
+     * @deprecated use {@code java.nio.charset.StandardCharsets.UTF_8}
      */
     @Deprecated
     public static final String UTF_8 = "UTF-8";
@@ -101,7 +100,7 @@ public class ReaderFactory {
     /**
      * The <code>file.encoding</code> System Property.
      *
-     * @deprecated use {@code java.nio.charset.Charset.getDefaultCharset()}
+     * @deprecated use {@code java.nio.charset.Charset.defaultCharset()}
      */
     @Deprecated
     public static final String FILE_ENCODING = Charset.defaultCharset().displayName();
@@ -115,7 +114,7 @@ public class ReaderFactory {
      * @deprecated use {@code org.apache.commons.io.input.XmlStreamReader} instead
      */
     @Deprecated
-    public static Reader newXmlReader(@NonNull InputStream in) throws IOException {
+    public static Reader newXmlReader(InputStream in) throws IOException {
         return new XmlStreamReader(in);
     }
 
@@ -125,10 +124,10 @@ public class ReaderFactory {
      * @param file not null file
      * @return an XML reader instance for the input file
      * @throws IOException if any
-     * @deprecated use {}@code org.apache.commons.io.input.XmlStreamReader} instead
+     * @deprecated use {@code org.apache.commons.io.input.XmlStreamReader} instead
      */
     @Deprecated
-    public static Reader newXmlReader(@NonNull File file) throws IOException {
+    public static Reader newXmlReader(File file) throws IOException {
         return new XmlStreamReader(file);
     }
 
@@ -141,7 +140,7 @@ public class ReaderFactory {
      * @deprecated use {@code org.apache.commons.io.input.XmlStreamReader} instead
      */
     @Deprecated
-    public static Reader newXmlReader(@NonNull URL url) throws IOException {
+    public static Reader newXmlReader(URL url) throws IOException {
         return new XmlStreamReader(url);
     }
 
@@ -155,7 +154,7 @@ public class ReaderFactory {
      * @deprecated always specify an encoding. Do not depend on the default platform character set.
      */
     @Deprecated
-    public static Reader newPlatformReader(@NonNull File file) throws FileNotFoundException {
+    public static Reader newPlatformReader(File file) throws FileNotFoundException {
         return new FileReader(file);
     }
 
@@ -172,8 +171,7 @@ public class ReaderFactory {
      * @deprecated use {@code new InputStreamReader(in, encoding)} instead
      */
     @Deprecated
-    public static Reader newReader(@NonNull InputStream in, @NonNull String encoding)
-            throws UnsupportedEncodingException {
+    public static Reader newReader(InputStream in, String encoding) throws UnsupportedEncodingException {
         return new InputStreamReader(in, encoding);
     }
 
@@ -192,7 +190,7 @@ public class ReaderFactory {
      *    or {@code new Files.newBufferedReader} instead
      */
     @Deprecated
-    public static Reader newReader(@NonNull File file, @NonNull String encoding)
+    public static Reader newReader(File file, String encoding)
             throws FileNotFoundException, UnsupportedEncodingException {
         return new InputStreamReader(new FileInputStream(file), encoding);
     }
@@ -211,7 +209,7 @@ public class ReaderFactory {
      * @deprecated This method does not use HTTP headers to detect the resource's encoding.
      */
     @Deprecated
-    public static Reader newReader(@NonNull URL url, @NonNull String encoding) throws IOException {
+    public static Reader newReader(URL url, String encoding) throws IOException {
         return new InputStreamReader(url.openStream(), encoding);
     }
 }

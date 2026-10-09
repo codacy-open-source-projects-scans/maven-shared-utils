@@ -113,6 +113,11 @@ public class OsTest {
     }
 
     @Test
+    public void testOsFamilyIsValidFamily() {
+        assertTrue(Os.isValidFamily(Os.OS_FAMILY));
+    }
+
+    @Test
     public void testIsArch() {
         assertTrue(Os.isArch("i386"), "Arch is i386");
 

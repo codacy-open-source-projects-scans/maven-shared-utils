@@ -27,8 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jspecify.annotations.NonNull;
-
 /**
  * A reimplementation of Plexus Xpp3Dom based on the public interface of Plexus Xpp3Dom.
  *
@@ -95,6 +93,10 @@ public class Xpp3Dom implements Iterable<Xpp3Dom> {
         childMap = new HashMap<>();
     }
 
+    boolean isValueSet() {
+        return value != null;
+    }
+
     /**
      * Create instance.
      *
@@ -110,7 +112,7 @@ public class Xpp3Dom implements Iterable<Xpp3Dom> {
      * @param src the source Dom
      * @param name the name of the Dom
      */
-    public Xpp3Dom(@NonNull Xpp3Dom src, String name) {
+    public Xpp3Dom(Xpp3Dom src, String name) {
         this.name = name;
 
         int size = src.getChildCount();
@@ -138,15 +140,14 @@ public class Xpp3Dom implements Iterable<Xpp3Dom> {
     /**
      * @return the current value
      */
-    @NonNull
     public String getValue() {
-        return value;
+        return value != null ? value : "";
     }
 
     /**
      * @param value the value to be set
      */
-    public void setValue(@NonNull String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
@@ -170,7 +171,7 @@ public class Xpp3Dom implements Iterable<Xpp3Dom> {
      * @param nameParameter the name of the attribute
      * @param valueParameter the value of the attribute
      */
-    public void setAttribute(@NonNull String nameParameter, @NonNull String valueParameter) {
+    public void setAttribute(String nameParameter, String valueParameter) {
         if (valueParameter == null) {
             throw new NullPointerException("value can not be null");
         }
@@ -261,8 +262,22 @@ public class Xpp3Dom implements Iterable<Xpp3Dom> {
      */
     public void removeChild(int i) {
         Xpp3Dom child = childList.remove(i);
-        childMap.values().remove(child);
         child.setParent(null);
+
+        String name = child.getName();
+        if (childMap.get(name) == child) {
+            Xpp3Dom lastWithName = null;
+            for (Xpp3Dom c : childList) {
+                if (name.equals(c.getName())) {
+                    lastWithName = c;
+                }
+            }
+            if (lastWithName != null) {
+                childMap.put(name, lastWithName);
+            } else {
+                childMap.remove(name);
+            }
+        }
     }
 
     /**

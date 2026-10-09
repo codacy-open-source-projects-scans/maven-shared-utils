@@ -18,6 +18,9 @@
  */
 package org.apache.maven.shared.utils.cli;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
@@ -26,6 +29,7 @@ import java.util.Properties;
 
 import org.apache.maven.shared.utils.Os;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -105,6 +109,119 @@ public class CommandLineUtilsTest {
         final Process p = new Commandline("echo \"let's go\"").execute();
         p.waitFor();
         assertEquals(0, p.exitValue());
+    }
+
+    /**
+     * A process that writes more output than fits in the OS pipe buffer is still being drained by the stream pumpers
+     * when {@code waitFor()} returns. Closing the process streams unconditionally at that point (as was attempted to
+     * work around <a href="https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4311711">JDK-4311711</a>) makes an
+     * in-flight {@code readLine()} throw and surfaces as a spurious {@link CommandLineException} on a process that
+     * exited successfully with complete output. The close must therefore only be forced as a fallback after the pumpers
+     * had a grace period to reach EOF on their own. Repeats because the race is timing dependent. Unix-only because it
+     * relies on {@code seq}.
+     */
+    @Test
+    public void executeCommandLineWithLargeStdoutCompletesWithoutFailure() throws Exception {
+        if (!Os.isFamily(Os.FAMILY_UNIX)) {
+            return;
+        }
+
+        int lines = 50000;
+
+        StringBuilder expected = new StringBuilder();
+        for (int i = 1; i <= lines; i++) {
+            expected.append(i).append(System.lineSeparator());
+        }
+
+        for (int i = 0; i < 10; i++) {
+            Commandline cl = new Commandline("seq 1 " + lines);
+
+            CommandLineUtils.StringStreamConsumer stdout = new CommandLineUtils.StringStreamConsumer();
+            CommandLineUtils.StringStreamConsumer stderr = new CommandLineUtils.StringStreamConsumer();
+
+            int exitCode = CommandLineUtils.executeCommandLine(cl, stdout, stderr);
+
+            assertEquals(0, exitCode, "unexpected exit code in iteration " + i);
+            assertEquals(expected.toString(), stdout.getOutput(), "stdout must be complete in iteration " + i);
+            assertEquals("", stderr.getOutput(), "stderr must be empty in iteration " + i);
+        }
+    }
+
+    @TempDir
+    File tempDir;
+
+    @Test
+    public void executeCommandLineOnWindowsPassesCmdSpecialCharactersThrough() throws Exception {
+        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            return;
+        }
+
+        // MSHARED-765: unquoted, cmd.exe runs "echo a" and then tries to run "b"
+        Commandline cl = new Commandline();
+        cl.setExecutable("echo");
+        cl.createArg().setValue("a&b");
+
+        CommandLineUtils.StringStreamConsumer stdout = new CommandLineUtils.StringStreamConsumer();
+        CommandLineUtils.StringStreamConsumer stderr = new CommandLineUtils.StringStreamConsumer();
+        int exitCode = CommandLineUtils.executeCommandLine(cl, stdout, stderr);
+
+        assertEquals(0, exitCode, stderr.getOutput());
+        assertEquals("\"a&b\"" + System.lineSeparator(), stdout.getOutput());
+    }
+
+    @Test
+    public void executeCommandLineOnWindowsRunsExecutableFromPathWithParentheses() throws Exception {
+        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            return;
+        }
+
+        // MSHARED-832: C:\work\lol(1)\maven\bin\mvn.cmd
+        File dir = new File(tempDir, "lol(1)");
+        assertTrue(dir.mkdirs());
+        File script = new File(dir, "x.cmd");
+        Files.write(script.toPath(), "@echo ok".getBytes(StandardCharsets.US_ASCII));
+
+        Commandline cl = new Commandline();
+        cl.setExecutable(script.getAbsolutePath());
+
+        CommandLineUtils.StringStreamConsumer stdout = new CommandLineUtils.StringStreamConsumer();
+        CommandLineUtils.StringStreamConsumer stderr = new CommandLineUtils.StringStreamConsumer();
+        int exitCode = CommandLineUtils.executeCommandLine(cl, stdout, stderr);
+
+        assertEquals(0, exitCode, stderr.getOutput());
+        assertEquals("ok" + System.lineSeparator(), stdout.getOutput());
+    }
+
+    @Test
+    public void executeCommandLineDecodesOutputWithTheGivenCharset() throws Exception {
+        if (!Os.isFamily(Os.FAMILY_UNIX)) {
+            return;
+        }
+
+        // the shell emits the UTF-8 bytes of "caf\u00e9" regardless of the JVM default charset
+        String printfUtf8Cafe = "printf 'caf\\303\\251'";
+
+        CommandLineUtils.StringStreamConsumer utf8 = new CommandLineUtils.StringStreamConsumer();
+        CommandLineUtils.executeCommandLine(
+                new Commandline(printfUtf8Cafe),
+                null,
+                utf8,
+                new CommandLineUtils.StringStreamConsumer(),
+                0,
+                null,
+                StandardCharsets.UTF_8);
+        assertEquals("caf\u00e9" + System.lineSeparator(), utf8.getOutput());
+
+        CommandLineUtils.StringStreamConsumer latin1 = new CommandLineUtils.StringStreamConsumer();
+        CommandLineUtils.executeCommandLine(
+                new Commandline(printfUtf8Cafe),
+                null,
+                latin1,
+                new CommandLineUtils.StringStreamConsumer(),
+                0,
+                null,
+                StandardCharsets.ISO_8859_1);
+        assertEquals("caf\u00c3\u00a9" + System.lineSeparator(), latin1.getOutput());
     }
 
     @Test

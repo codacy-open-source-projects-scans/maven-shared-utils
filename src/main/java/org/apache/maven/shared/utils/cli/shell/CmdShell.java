@@ -22,17 +22,22 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Implementation to call the CMD Shell present on Windows NT, 2000, XP, 7, 8, and 10.
+ * Implementation to call the CMD Shell present on Windows.
  *
  * @author <a href="mailto:carlos@apache.org">Carlos Sanchez</a>
  */
 public class CmdShell extends Shell {
     /**
+     * Characters that make {@code cmd.exe} interpret an unquoted item: whitespace and, per {@code cmd.exe /?},
+     * {@code &<>()@^|}.
+     */
+    private static final char[] CMD_SPECIAL_CHARS = {' ', '\t', '&', '<', '>', '(', ')', '@', '^', '|'};
+
+    /**
      * Create an instance of CmdShell.
      */
     public CmdShell() {
         setShellCommand("cmd.exe");
-        setQuotedExecutableEnabled(true);
         setShellArgs(new String[] {"/X", "/C"});
     }
 
@@ -77,6 +82,35 @@ public class CmdShell extends Shell {
      * @param arguments the arguments for the executable
      * @return the resulting command line
      */
+    /**
+     * Quotes an item that contains a character {@code cmd.exe} would otherwise interpret: whitespace and the
+     * special characters listed above, or every item when {@link #isUnconditionalQuoting()} is set. An item that
+     * is already surrounded by double quotes is left as it is.
+     *
+     * @param inputString the executable or argument
+     * @param isExecutable unused, the executable and the arguments are quoted the same way
+     * @return the item, surrounded by double quotes when {@code cmd.exe} needs them
+     */
+    @Override
+    protected String quoteOneItem(String inputString, boolean isExecutable) {
+        if (inputString == null || inputString.isEmpty()) {
+            return inputString;
+        }
+        if (inputString.length() > 1 && inputString.startsWith("\"") && inputString.endsWith("\"")) {
+            return inputString;
+        }
+        if (isUnconditionalQuoting()) {
+            return "\"" + inputString + "\"";
+        }
+        for (char c : CMD_SPECIAL_CHARS) {
+            if (inputString.indexOf(c) >= 0) {
+                return "\"" + inputString + "\"";
+            }
+        }
+        return inputString;
+    }
+
+    @Override
     public List<String> getCommandLine(String executable, String... arguments) {
         StringBuilder sb = new StringBuilder();
         sb.append('"');
